@@ -1,0 +1,850 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ivorytwoer的Hexo博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="ivorytwoer的Hexo博客">
+<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:site_name" content="ivorytwoer的Hexo博客">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ivorytwoer的Hexo博客">
+  
+    <link rel="alternative" href="/atom.xml" title="ivorytwoer的Hexo博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">ivorytwoer的Hexo博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一只在CS道路上狂奔的羊驼</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yoursite.com">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main">
+  
+    <article id="post-Learning-to-rank" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/07/05/Learning-to-rank/" class="article-date">
+  <time datetime="2017-07-05T08:15:23.000Z" itemprop="datePublished">2017-07-05</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/排序/">排序</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/07/05/Learning-to-rank/">Learning to rank</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- toc -->
+<ul>
+<li><a href="#简介">简介</a></li>
+<li><a href="#pointwise">Pointwise</a></li>
+<li><a href="#pairwise">Pairwise</a><ul>
+<li><a href="#ranksvm">RankSVM</a></li>
+<li><a href="#ranknet">RankNet</a></li>
+<li><a href="#rankboost">Rankboost</a></li>
+</ul>
+</li>
+<li><a href="#listwise">Listwise</a><ul>
+<li><a href="#lambdarank">LambdaRank</a></li>
+<li><a href="#adarank">AdaRank</a></li>
+<li><a href="#lambdamart">LambdaMART</a></li>
+</ul>
+</li>
+<li><a href="#指标">指标</a><ul>
+<li><a href="#map">mAP</a></li>
+<li><a href="#ndcg">NDCG</a></li>
+<li><a href="#mrr">mRR</a></li>
+</ul>
+</li>
+<li><a href="#reference">Reference</a></li>
+</ul>
+<!-- tocstop -->
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>排序学习是推荐、搜索、广告的核心方法。排序结果的好坏很大程度影响用户体验、广告收入等。<br>排序学习是一个有监督的机器学习过程，对每一个给定的查询－文档对，抽取特征，通过日志挖掘或者人工标注的方法获得真实数据标注。然后通过排序模型，使得输入能够和实际的数据相似。<br>常用的排序学习分为三种类型：PointWise，PairWise和ListWise。</p>
+<h2 id="pointwise"><a href="#Pointwise" class="headerlink" title="Pointwise"></a>Pointwise</h2><p>单文档方法的处理对象是单独的一篇文档，将文档转换为特征向量后，机器学习系统根据从训练数据中学习到的分类或者回归函数对文档打分，打分结果即是搜索结果。</p>
+<h2 id="pairwise"><a href="#Pairwise" class="headerlink" title="Pairwise"></a>Pairwise</h2><p>对于搜索系统来说，系统接收到用户査询后，返回相关文档列表，所以问题的关键是确定文档之间的先后顺序关系。单文档方法完全从单个文档的分类得分角度计算，没有考虑文档之间的顺序关系。文档对方法将排序问题转化为多个pair的排序问题，比较不同文章的先后顺序。</p>
+<p>但是文档对方法也存在如下问题：</p>
+<ol>
+<li>文档对方法考虑了两个文档对的相对先后顺序，却没有考虑文档出现在搜索列表中的位置，排在搜索结果前面的文档更为重要，如果靠前的文档出现判断错误，代价明显高于排在后面的文档。</li>
+<li>同时不同的査询，其相关文档数量差异很大，所以转换为文档对之后， 有的查询对能有几百个对应的文档对，而有的查询只有十几个对应的文档对，这对机器学习系统的效果评价造成困难。</li>
+</ol>
+<h3 id="ranksvm"><a href="#RankSVM" class="headerlink" title="RankSVM"></a>RankSVM</h3><p>将文档对($d_0$, $d_1$)对应的特征之差$x_0-x_1$作为SVM样本的特征，若相关度$d_0 &gt; d_1$则为正样本（标签为+1），反之为负样本（标签为-1），用于训练一个二分类的线性SVM，求：</p>
+<script type="math/tex; mode=display">min \frac{1}{2} ||w||^2 + C \sum \xi_i</script><p>文献：R. Herbrich, T. Graepel, and K. Obermayer. Large margin rank boundaries for ordinal regression. In Advances in Large Margin Classifiers, 2000. </p>
+<h3 id="ranknet"><a href="#RankNet" class="headerlink" title="RankNet"></a>RankNet</h3><p>RankNet是一个只有一个隐藏层的MLP，采用了sigmoid激活函数。<br>定义文档对($d_i$, $d_j$)（对应的特征为$x_i$和$x_j$）的预测概率为：</p>
+<script type="math/tex; mode=display">P_{ij}\equiv \frac{1}{1+e^{-(f(x_i)-f(x_j))}}</script><p>其中，$f(x_i)$即为RankNet对$x_i$的输出。</p>
+<p>若相关度$d_i &gt; d_j$，则真实概率$\bar P_{ij}=1$；若$d_i = d_j$，则$\bar P_{ij}=0.5$；否则$\bar P_{ij}=0$。</p>
+<p>网络的损失函数采用交叉熵：</p>
+<script type="math/tex; mode=display">C_{ij}=-\bar P_{ij}(f(x_i)-f(x_j))+log(1+e^{f(x_i)-f(x_j)})</script><h3 id="rankboost"><a href="#Rankboost" class="headerlink" title="Rankboost"></a>Rankboost</h3><h2 id="listwise"><a href="#Listwise" class="headerlink" title="Listwise"></a>Listwise</h2><p>文档方法将训练集里每一个文档当做一个训练实例，文档对方法将同一个査询的搜索结果里任意两个文档对作为一个训练实例，文档列表方法与上述两种方法都不同，ListWise方法直接考虑整体序列，针对Ranking评价指标进行优化。</p>
+<h3 id="lambdarank"><a href="#LambdaRank" class="headerlink" title="LambdaRank"></a>LambdaRank</h3><h3 id="adarank"><a href="#AdaRank" class="headerlink" title="AdaRank"></a>AdaRank</h3><h3 id="lambdamart"><a href="#LambdaMART" class="headerlink" title="LambdaMART"></a>LambdaMART</h3><h2 id="指标"><a href="#指标" class="headerlink" title="指标"></a>指标</h2><h3 id="map"><a href="#mAP" class="headerlink" title="mAP"></a>mAP</h3><h3 id="ndcg"><a href="#NDCG" class="headerlink" title="NDCG"></a>NDCG</h3><h3 id="mrr"><a href="#mRR" class="headerlink" title="mRR"></a>mRR</h3><h2 id="reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="https://zhuanlan.zhihu.com/p/26539920" target="_blank" rel="external">Learning to rank基本算法小结</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/2017/07/05/Learning-to-rank/" data-id="cj4s290hp0001ukvm1jc8d1hg" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://yoursite.com/2017/07/05/Learning-to-rank/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Rank/">Rank</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-x86-assembly-and-BLAS-optimization" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/07/05/x86-assembly-and-BLAS-optimization/" class="article-date">
+  <time datetime="2017-07-04T17:22:52.000Z" itemprop="datePublished">2017-07-05</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/程序语言/">程序语言</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/07/05/x86-assembly-and-BLAS-optimization/">x86汇编与BLAS优化</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>[TOC]</p>
+<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><p>x86汇编的语法分为Intel与AT&amp;T两种，前者多见于NASM等编译器，后者则由GNU系的工具如GCC等使用。<br>区别主要如下：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>区别</th>
+<th>Intel</th>
+<th>AT&amp;T</th>
+<th>注释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>寄存器前缀</td>
+<td>%eax</td>
+<td>eax</td>
+<td></td>
+</tr>
+<tr>
+<td>立即数</td>
+<td>$5</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td>指令后缀</td>
+<td>movl, movb</td>
+<td>mov</td>
+<td>操作数长度</td>
+</tr>
+<tr>
+<td>参数次序</td>
+<td>movl %src, %dst</td>
+<td>mov dst, src</td>
+<td></td>
+</tr>
+<tr>
+<td>取址1</td>
+<td>var</td>
+<td>[var]</td>
+<td>mem[var]</td>
+</tr>
+<tr>
+<td>取址2</td>
+<td>0x8(%eax)</td>
+<td>[eax + 0x8]</td>
+<td>mem[eax + 8]</td>
+</tr>
+<tr>
+<td>取址3</td>
+<td>arr(, %eax, 4)</td>
+<td>[eax * 4 + arr]</td>
+<td>mem[eax * 4 + arr]</td>
+</tr>
+<tr>
+<td>取址4</td>
+<td>arr(%edx, %eax, 4)</td>
+<td>[ebx + eax * 4 + arr]</td>
+<td>mem[ebx + eax * 4 + arr]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="寄存器"><a href="#寄存器" class="headerlink" title="寄存器"></a>寄存器</h2><h3 id="通用寄存器"><a href="#通用寄存器" class="headerlink" title="通用寄存器"></a>通用寄存器</h3><p>32位x86架构的CPU有8个通用寄存器，其16位模式下的名称分别如下：</p>
+<ul>
+<li>AX: Accumulator register</li>
+<li>CX: Counter register</li>
+<li>DX: Data register</li>
+<li>BX: Base register</li>
+<li>SP: Stack pointer register，指向栈顶。</li>
+<li>BP: Stack base pointer register，指向当前stack frame的底部。</li>
+<li>SI: Source index register</li>
+<li>DI: Destination index register</li>
+</ul>
+<p>32位寄存器的名称前需加上E（如EAX），64位则需加上R（如RAX）。<br>此外，寄存器AX、BX、CX、DX的高8位和低8位可以分成两个单独的寄存器使用，名称分别是XH和XL（如AXH和AXL）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">+---------------------------------------------------------------+ </div><div class="line">| 8bits | 8bits | 8bits | 8bits | 8bits | 8bits | 8bits | 8bits | </div><div class="line">|---------------------------------------------------------------| </div><div class="line">|                              RAX                              | </div><div class="line">|---------------------------------------------------------------| </div><div class="line">|                               |              EAX              |</div><div class="line">|---------------------------------------------------------------|</div><div class="line">|                                               |      AX       |</div><div class="line">|---------------------------------------------------------------|</div><div class="line">|                                               |  AH   |   AL  |</div><div class="line">+---------------------------------------------------------------+</div></pre></td></tr></table></figure>
+<p>支持SSE指令集的32位CPU上，增加了8个用于SIMD指令的128位寄存器XMM0~XMM7，支持AVX指令集的CPU上，增加了8个256位寄存器YMM0~YMM7，XMM0~XMM7分别为它们的低128位。</p>
+<p>64位x86架构的CPU增加了8个新的64位通用寄存器R8~R15，原来的RAX、RCX、RDX、RBX、RSP、RBP、RSI、RDI分别为R0~R7，共同组成了16个通用寄存器。它们的低32位寄存器为R0D~R15D，低16位寄存器为R0W~R15W，低8位寄存器为R0L~R15L。<br>此外，由于64位x86汇编增加了8个用于SIMD指令的128位寄存器XMM8~XMM15。在支持AVX指令集的CPU上，增加了8个256位寄存器YMM8~YMM15。</p>
+<h2 id="指令"><a href="#指令" class="headerlink" title="指令"></a>指令</h2><p><strong>赋值</strong></p>
+<ul>
+<li>mov dst, [src - 0x8]: dst = mem[src - 0x8]</li>
+<li>lea dst, [src - 0x8]: dst = src - 0x8</li>
+</ul>
+<p><strong>比较</strong></p>
+<ul>
+<li>cmp</li>
+</ul>
+<p><strong>跳转</strong></p>
+<ul>
+<li>jmp label: 无条件跳转到对应的label地址处。</li>
+<li>je label: 如果上一次cmp指令结果是相等的，跳转到label处。</li>
+<li>jne label: 如果上一次cmp指令结果不相等，跳转到label处。</li>
+<li>jl label: 如果上一次cmp指令的结果是小于，跳转到label处。</li>
+<li><a href="https://en.wikibooks.org/wiki/X86_Assembly/Control_Flow#Jump_Instructions" target="_blank" rel="external">其他</a></li>
+</ul>
+<p><strong>循环</strong></p>
+<ul>
+<li><p>loop label: </p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">mov</span> <span class="built_in">ecx</span>, <span class="number">10</span></div><div class="line"><span class="symbol">l:</span></div><div class="line">    <span class="keyword">add</span> <span class="built_in">eax</span>, <span class="built_in">eax</span></div><div class="line">    <span class="keyword">add</span> <span class="built_in">ebx</span>, <span class="built_in">eax</span></div><div class="line">    <span class="keyword">loop</span> l</div></pre></td></tr></table></figure>
+</li>
+<li><p>loop不支持超过127bytes长度的跳转，此时只能用dec ecx加上jnz代替</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">mov</span> <span class="built_in">ecx</span>, <span class="number">10</span></div><div class="line"><span class="symbol">l:</span></div><div class="line">    <span class="keyword">add</span> <span class="built_in">eax</span>, <span class="built_in">eax</span></div><div class="line">    <span class="keyword">add</span> <span class="built_in">ebx</span>, <span class="built_in">eax</span></div><div class="line">    <span class="keyword">dec</span> <span class="built_in">ecx</span></div><div class="line">    <span class="keyword">jnz</span> l</div></pre></td></tr></table></figure>
+</li>
+<li><p>嵌套循环中循环计数器不够时</p>
+<ul>
+<li>在进入一层循环的开始先将外面一层循环的计数器先保存起来，等到内存循环退出的时候在将外层循环的计数器重新恢复</li>
+<li>将cx保存在栈中是标准的做法，压栈和弹栈的顺序刚好符合循环嵌套的顺序，并且只需要push和pop操作，无需程序员自己维护栈中的区域</li>
+</ul>
+</li>
+</ul>
+<p><strong>函数调用</strong></p>
+<ul>
+<li>call proc: 将下一条指令的地址入栈，然后跳转到proc地址处。</li>
+<li>ret: 将栈顶的数据出栈并载入IP寄存器（即跳转回call的下一条指令处）。<br>esp记录着当前栈顶所在的位置，每次call和ret执行都会伴随着入栈和出栈，esp会发生变化。</li>
+</ul>
+<p><strong>运算</strong></p>
+<ul>
+<li>add</li>
+<li>sub</li>
+<li>inc</li>
+<li>dec</li>
+<li>mul/imul</li>
+<li>div/idiv</li>
+</ul>
+<p><strong>SIMD</strong><br><a href="https://software.intel.com/sites/landingpage/IntrinsicsGuide/" target="_blank" rel="external">Intel Intrinsics Guide</a><br><a href="http://www.officedaytime.com/tips/simd.html" target="_blank" rel="external">x86/x64 SIMD命令一覧表 （SSE～AVX2）</a></p>
+<p>更多参见<a href="http://www.cnblogs.com/YukiJohnson/archive/2012/10/27/2741836.html" target="_blank" rel="external">X86汇编快速入门</a>、<a href="https://www.ibm.com/developerworks/cn/linux/l-assembly/index.html" target="_blank" rel="external">IBM - Linux 汇编语言开发指南</a></p>
+<p><strong>注</strong>：</p>
+<ul>
+<li>不允许add [eax], [ebx]这样从内存到内存的操作</li>
+<li>[base + index*scale + disp]中的scale只能取1、2、4、8</li>
+</ul>
+<h2 id="nasm"><a href="#NASM" class="headerlink" title="NASM"></a>NASM</h2><ul>
+<li>注释用<code>;</code>开头</li>
+<li><p>基本格式，参考<a href="https://gist.github.com/huodon/ab3c833c87b06800c919" target="_blank" rel="external">nasm quick-start</a></p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="meta">section</span> .data</div><div class="line">    <span class="comment">; 变量名 内存分配 变量值</span></div><div class="line">    var1 <span class="built_in">dd</span> <span class="number">40</span> <span class="comment">; 32 位 </span></div><div class="line">    var2 <span class="built_in">dw</span> <span class="number">20</span> <span class="comment">; 16 位</span></div><div class="line">    var3 <span class="built_in">db</span> <span class="number">30</span> <span class="comment">; 8  位</span></div><div class="line"></div><div class="line"><span class="comment">; Text segment, 是处理器开始执行代码的地方</span></div><div class="line"><span class="meta">section</span> .text</div><div class="line">    <span class="meta">global</span> _start <span class="comment">; 让一个符号对链接器可见</span></div><div class="line"></div><div class="line"><span class="comment">; Program entry</span></div><div class="line"><span class="symbol">    _start:</span></div><div class="line">        <span class="keyword">mov</span> <span class="built_in">eax</span>, <span class="number">1</span> <span class="comment">; 传送 1 到 eax</span></div><div class="line">        <span class="keyword">mov</span> <span class="built_in">ebx</span>, <span class="number">2</span> <span class="comment">; 返回值</span></div><div class="line">        <span class="comment">; 调用系统</span></div><div class="line">        <span class="comment">; 它请求系统一个服务, 服务编码放在 EAX 中</span></div><div class="line">        <span class="comment">; EAX 如果是1, 代表 Linux 的 exit 调用</span></div><div class="line">        <span class="comment">; 80h 代表 hex</span></div><div class="line">        <span class="keyword">int</span> <span class="number">80h</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>指定操作数长度：mov eax, dword/word/byte [ebx]</p>
+</li>
+<li>单行宏：%define</li>
+<li>多行宏<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">%macro defname numofparam</div><div class="line">...</div><div class="line">%endmacro</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>更多示例见<a href="http://cs.lmu.edu/~ray/notes/nasmtutorial/" target="_blank" rel="external">NASM Tutorial</a></p>
+<h2 id="c调用汇编函数"><a href="#C调用汇编函数" class="headerlink" title="C调用汇编函数"></a>C调用汇编函数</h2><h3 id="调用约定"><a href="#调用约定" class="headerlink" title="调用约定"></a>调用约定</h3><p>分为VS和gcc两种，以下说明gcc的调用约定：</p>
+<ul>
+<li>非易失寄存器（函数执行前后必须保持原值，即需要在操作前入栈，操作后出栈以保护现场）有：rbx、rbp、rsp、r12、r13、r14、r15。保持原值的意义是为了让当前函数有可信任的寄存器，减小在函数调用过程中的保存&amp;恢复操作。除了rbp、rsp用于特定用途外，其余5个寄存器可随意使用。</li>
+<li>易失寄存器（被调用者不必保存和恢复它们的值）有<ul>
+<li>整型/指针：rax（第一个返回寄存器）、rcx（第四个参数寄存器）、rdx（第二个返回寄存器、第三个参数寄存器）、rdi（第一个参数寄存器）、rsi（第二个参数）、r8（第五个参数）、r9（第六个参数）</li>
+<li>浮点型：xmm0~7</li>
+</ul>
+</li>
+<li>调用<ul>
+<li>当参数少于7个时， 参数从左到右放入寄存器: rdi, rsi, rdx, rcx, r8, r9（整型/指针），xmm0~7（浮点型）</li>
+<li>当参数为7个以上时， 前 6 个与前面一样， 但后面的依次从 “右向左” 放入栈中，即和32位汇编一样<ul>
+<li>例：H(a, b, c, d, e, f, g, h);<ul>
+<li>a-&gt;%rdi, b-&gt;%rsi, c-&gt;%rdx, d-&gt;%rcx, e-&gt;%r8, f-&gt;%r9</li>
+<li>h-&gt;8(%esp)</li>
+<li>g-&gt;(%esp)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="现场保护"><a href="#现场保护" class="headerlink" title="现场保护"></a>现场保护</h3><p>在每个函数最开始的地方有两条语句<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line"><span class="keyword">mov</span> <span class="built_in">ebp</span>, <span class="built_in">esp</span></div></pre></td></tr></table></figure></p>
+<p>在函数返回前也有两条语句<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">mov</span> <span class="built_in">esp</span>, <span class="built_in">ebp</span></div><div class="line"><span class="keyword">pop</span> <span class="built_in">ebp</span></div></pre></td></tr></table></figure></p>
+<p>解释：</p>
+<ol>
+<li>每运行一个函数就新开一段栈空间，所谓的开栈空间就是移动ebp栈底，在移动ebp之前，通过push ebp保存上一级函数的栈底，然后用ebp指向现在函数栈的栈顶，即为当前函数开辟了栈；</li>
+<li>接着给局部变量进行地址分配以及保存现场等，esp不断向低地址移动，当函数调用结束时，esp指回当前函数的栈顶(mov esp,ebp)，然后上一级函数的栈顶地址出栈保存在ebp中（pop ebp）。<br>因此，每一个函数的栈顶上面都保存着上一级函数的栈顶地址，用于当前函数结束时能够返回上一级函数的栈，通过ebp和esp以及压栈出栈操作对栈进行维护。</li>
+</ol>
+<p>参考<a href="http://blog.csdn.net/shallnet/article/details/45651601" target="_blank" rel="external">这里</a></p>
+<h2 id="数据预取"><a href="#数据预取" class="headerlink" title="数据预取"></a>数据预取</h2><ul>
+<li>硬件预取<ul>
+<li>到导致两个连续的缓存缺失的内存地址之间的距离在给定的阈值（128B或者256B）之内时，处理器就会触发数据预取</li>
+<li>那些步长为常量（包括向前步长和向后步长）的流式访问也可能触发硬件预取，预取单元可以同时支持多个独立的数据流的预取</li>
+</ul>
+</li>
+<li>软件预取<ul>
+<li>cache line size：主流为64Byte（即16个int32）,Xeon为128</li>
+<li>预取指令只是给CPU一个提示，所以它可被CPU忽略</li>
+<li>void _mm_prefetch(char const *a,int sel);<ul>
+<li>PREFETCHINTA _MM_HINT_NTA 采用非临时预取，减少缓存行的污染</li>
+<li>PREFETCH0 _MM_HINT_T0 预取数据到所有缓存</li>
+<li>PREFETCH1 _MM_HINT_T1 预取到L2，L3缓存，但是不到L1缓存</li>
+<li>PREFETCH2 _MM_HINT_T2 仅预取数据到L3缓存</li>
+</ul>
+</li>
+<li>如果预取的数据仅仅使用一次，一般应该采用非临时预取，如果要进行写操作或者访问该缓存行多次，一般采用预取数据到所有缓存。</li>
+<li>prefetchnta预取指令不会污染CACHE，它把每次取得的数据都存放到L2 CACHE的第一条CACHE LINE(不同的cpu不一样)，而另外几条指令会替换CACHE中最近最少使用的CACHE LINE。</li>
+<li>预取执行的时机<ul>
+<li>太早：离会使用到预取数据的指令太远，当指令需要使用时数据已经被释放，必须重新再取一次数据，流水线停滞，不仅没有优势，反而产生了额外的时间消耗</li>
+<li>太晚：离会使用到预取数据的指令太近，因为数据有从内存到cache的延迟，故指令需要使用时数据还未取到，流水线停滞，降低了预取的效率</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>参考</p>
+<ul>
+<li><a href="http://blog.csdn.net/dnhan/article/details/42492313" target="_blank" rel="external">Cache Prefetching Overview</a></li>
+<li><a href="http://blog.csdn.net/zhangxxxww/article/details/45366773" target="_blank" rel="external">intel指令优化</a></li>
+<li><a href="https://stackoverflow.com/questions/14189484/nasm-prefetching" target="_blank" rel="external">nasm prefetching</a></li>
+<li><a href="http://blog.chinaunix.net/uid-20385936-id-3902562.html" target="_blank" rel="external">Intel平台编程总结——缓存优化之数据预取</a></li>
+</ul>
+<h2 id="应用矩阵乘法优化"><a href="#应用：矩阵乘法优化" class="headerlink" title="应用：矩阵乘法优化"></a>应用：矩阵乘法优化</h2><p>参考：</p>
+<ul>
+<li>程序优化<ul>
+<li><a href="http://blog.csdn.net/pud_zha/article/details/7913368" target="_blank" rel="external">汇编优化</a></li>
+<li><a href="http://blog.jobbole.com/85517/" target="_blank" rel="external">浅谈程序优化</a></li>
+<li><a href="http://yuzhangqiu.com/2012/10/02/hardware-optimaization-affecting-performance.html" target="_blank" rel="external">两个硬件级优化带来的性能影响</a></li>
+<li><a href="http://blog.jobbole.com/85185/" target="_blank" rel="external">关于CPU Cache：程序猿需要知道的那些</a></li>
+<li><a href="http://blog.csdn.net/cool_way/article/details/41855595" target="_blank" rel="external">7个示例科普CPU Cache line</a></li>
+<li><a href="http://blog.jobbole.com/84712/" target="_blank" rel="external">每个程序员都应当知道的编译器优化知识</a></li>
+<li><a href="http://www.codeceo.com/article/c-runtime-memory.html" target="_blank" rel="external">C程序运行时内存结构分析</a></li>
+<li><a href="https://software.intel.com/zh-cn/articles/intel-guide-for-developing-multithreaded-applications" target="_blank" rel="external">英特尔多线程应用开发指南</a></li>
+<li><a href="http://www.agner.org/optimize/" target="_blank" rel="external">Software optimization resources</a></li>
+</ul>
+</li>
+<li>BLAS优化<ul>
+<li><a href="https://wenku.baidu.com/view/7080dfd1bcd126fff6050b07.html" target="_blank" rel="external">矩阵乘法的平行优化</a></li>
+<li><a href="https://stackoverflow.com/questions/1303182/how-does-blas-get-such-extreme-performance/11421344#11421344" target="_blank" rel="external">How does BLAS get such extreme performance?</a></li>
+<li><a href="https://stackoverflow.com/questions/24071622/replicating-blas-matrix-multiplication-performance-can-i-match-it" target="_blank" rel="external">Replicating BLAS matrix multiplication performance: Can I match it?</a></li>
+<li><a href="https://stackoverflow.com/questions/24102103/how-do-i-attain-peak-cpu-performance-with-dot-product?noredirect=1&amp;lq=1" target="_blank" rel="external">How Do I Attain Peak CPU Performance With Dot Product?</a></li>
+</ul>
+</li>
+<li>已有的BLAS<ul>
+<li><a href="https://github.com/xianyi/OpenBLAS/" target="_blank" rel="external">OpenBLAS</a></li>
+<li><a href="http://apfel.mathematik.uni-ulm.de/~lehn/sghpc/gemm/" target="_blank" rel="external">GEMM: From Pure C to SSE Optimized Micro Kernels</a></li>
+<li><a href="https://github.com/google/gemmlowp" target="_blank" rel="external">Google - gemmlowp</a></li>
+<li><a href="https://github.com/ARM-software/ComputeLibrary" target="_blank" rel="external">ARM - ComputeLibrary</a></li>
+</ul>
+</li>
+</ul>
+<p>主要从两个方面：</p>
+<ul>
+<li>提高CPU Cache命中率<ul>
+<li>数据预取</li>
+</ul>
+</li>
+<li>提高CPU流水线的指令吞吐率<ul>
+<li>SIMD<ul>
+<li><a href="https://www.codeproject.com/articles/874396/crunching-numbers-with-avx-and-avx" target="_blank" rel="external">Crunching Numbers with AVX and AVX2</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><ul>
+<li>byte（字节）-8bit，word（字）-16bit，dword（双字）-32bit</li>
+<li>x86的栈是向着地址减小的方向增长的</li>
+<li><a href="http://blog.csdn.net/zqm201/article/category/3044113" target="_blank" rel="external">北京大学-计算机组成-笔记</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/2017/07/05/x86-assembly-and-BLAS-optimization/" data-id="cj4s290i6000bukvmb7a116ms" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://yoursite.com/2017/07/05/x86-assembly-and-BLAS-optimization/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Assembly/">Assembly</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/x86/">x86</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-TF-IDF" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/05/01/TF-IDF/" class="article-date">
+  <time datetime="2017-05-01T11:26:13.000Z" itemprop="datePublished">2017-05-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/自然语言处理/">自然语言处理</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/05/01/TF-IDF/">TF-IDF</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="tf-idf算法文章关键词提取"><a href="#TF-IDF算法——文章关键词提取" class="headerlink" title="TF-IDF算法——文章关键词提取"></a>TF-IDF算法——文章关键词提取</h2><p>TF-IDF是一种加权方法，用以评估一个字词对于一个文件集或一个语料库中的其中一份文件的重要程度。字词的重要性随着它在文件中出现的次数成正比增加，但同时会随着它在语料库中出现的频率成反比下降。<br>停用词（stop words）：”的”、”是”、”在”等，对找到结果毫无帮助、必须过滤掉的词，通常词频非常高。<br>逆文档频率（Inverse Document Frequency）：在词频的基础上，要对每个词分配一个”重要性”权重。最常见的词（”的”、”是”、”在”）给予最小的权重，较常见的词（”中国”）给予较小的权重，较少见的词（”蜜蜂”、”养殖”）给予较大的权重。大小与一个词的常见程度成反比。</p>
+<ol>
+<li>计算词频（Term Frequency）<script type="math/tex; mode=display">TF=某个词在文章中出现的次数</script>为了消除文章长短的影响，标准化：<script type="math/tex; mode=display">TF=\frac{某个词在文章中出现的次数}{文章的总词数}</script>或<script type="math/tex; mode=display">TF=\frac{某个词在文章中出现的次数}{该文出现次数最多的词的出现次数}</script></li>
+<li>计算逆文档频率（Inverse Document Frequency）<br>需要语料库（corpus）来模拟语言的使用环境<script type="math/tex; mode=display">IDF=log(\frac{语料库的文档总数}{包含该词的文档数+1})</script></li>
+<li>计算TF-IDF<script type="math/tex; mode=display">TF-IDF=TF \times IDF</script>TF-IDF与一个词在文档中的出现次数成正比，与该词在整个语言中的出现次数成反比。</li>
+<li>降序排列所有TF-IDF值，取排在最前面的几个词。</li>
+</ol>
+<h4 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h4><p>优点：简单快速，结果比较符合实际情况<br>缺点：单纯以”词频”衡量一个词的重要性，不够全面，有时重要的词可能出现次数并不多。而且，这种算法无法体现词的位置信息，出现位置靠前的词与出现位置靠后的词，都被视为重要性相同，这是不正确的。（一种解决方法是，对全文的第一段和每一段的第一句话，给予较大的权重。）</p>
+<h2 id="余弦相似性cosine-similarity"><a href="#余弦相似性（cosine-similarity）" class="headerlink" title="余弦相似性（cosine similarity）"></a>余弦相似性（cosine similarity）</h2><p>余弦值越接近1，就表明夹角越接近0度，也就是两个向量越相似。</p>
+<h4 id="判断文章的相似性"><a href="#判断文章的相似性" class="headerlink" title="判断文章的相似性"></a>判断文章的相似性</h4><ol>
+<li>使用TF-IDF算法，找出两篇文章的关键词；</li>
+<li>每篇文章各取出若干个关键词（比如20个），合并成一个集合，计算每篇文章对于这个集合中的词的词频（为了避免文章长度的差异，可以使用相对词频）；</li>
+<li>生成两篇文章各自的词频向量；</li>
+<li>计算两个向量的余弦相似度，值越大就表示越相似。</li>
+</ol>
+<h2 id="reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="http://www.ruanyifeng.com/blog/2013/03/tf-idf.html" target="_blank" rel="external">http://www.ruanyifeng.com/blog/2013/03/tf-idf.html</a><br><a href="http://www.cnblogs.com/biyeymyhjob/archive/2012/07/17/2595249.html" target="_blank" rel="external">http://www.cnblogs.com/biyeymyhjob/archive/2012/07/17/2595249.html</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/2017/05/01/TF-IDF/" data-id="cj4s290i30009ukvmfx0ahfw4" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://yoursite.com/2017/05/01/TF-IDF/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NLP/">NLP</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Face-Detection-Recognition" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/04/24/Face-Detection-Recognition/" class="article-date">
+  <time datetime="2017-04-24T15:14:16.000Z" itemprop="datePublished">2017-04-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/计算机视觉/">计算机视觉</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/04/24/Face-Detection-Recognition/">Face Detection &amp; Recognition</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="face-detection"><a href="#Face-Detection" class="headerlink" title="Face Detection"></a>Face Detection</h1><h2 id="mtcnn"><a href="#MTCNN" class="headerlink" title="MTCNN"></a>MTCNN</h2><h4 id="p-net"><a href="#P-Net" class="headerlink" title="P-Net"></a>P-Net</h4><h4 id="r-net"><a href="#R-Net" class="headerlink" title="R-Net"></a>R-Net</h4><h4 id="o-net"><a href="#O-Net" class="headerlink" title="O-Net"></a>O-Net</h4><h1 id="face-recognition"><a href="#Face-Recognition" class="headerlink" title="Face Recognition"></a>Face Recognition</h1><h2 id="development"><a href="#Development" class="headerlink" title="Development"></a>Development</h2><ul>
+<li>DeepFace</li>
+<li>DeepID</li>
+<li>FaceNet</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/2017/04/24/Face-Detection-Recognition/" data-id="cj4s290hk0000ukvmuki2zgd0" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://yoursite.com/2017/04/24/Face-Detection-Recognition/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CV/">CV</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Deep-Learning/">Deep Learning</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Object-Detection" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/04/24/Object-Detection/" class="article-date">
+  <time datetime="2017-04-24T15:04:55.000Z" itemprop="datePublished">2017-04-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/计算机视觉/">计算机视觉</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/04/24/Object-Detection/">Object Detection</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="development"><a href="#Development" class="headerlink" title="Development"></a>Development</h2><ul>
+<li>R-CNN</li>
+<li>SPP-Net</li>
+<li>Fast R-CNN</li>
+<li>Faster R-CNN</li>
+<li>YOLO</li>
+<li>FCN</li>
+<li>SSD</li>
+<li>R-FCN</li>
+<li>Mask R-CNN</li>
+</ul>
+<h3 id="r-cnn"><a href="#R-CNN" class="headerlink" title="R-CNN"></a>R-CNN</h3><h5 id="基本情况"><a href="#基本情况" class="headerlink" title="基本情况"></a>基本情况</h5><p>R-CNN即Region-CNN，深度学习目标检测的开山之作。<br>关键变化有2个：</p>
+<ol>
+<li>由传统的滑动窗口法改为预先提取一部分可能为目标的候选区域。</li>
+<li>由人工提取特征（如Haar、HOG）改为训练CNN进行提取。<h5 id="dataset"><a href="#Dataset" class="headerlink" title="Dataset"></a>Dataset</h5></li>
+<li>ImageNet ILSVC 2012：预训练，1000万张图片，共1000类。 </li>
+<li>PASCAL VOC 2007：检测，1万张图片，共20类。<h5 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h5></li>
+<li>一张输入图像生成1K~2K个候选区域；</li>
+<li>对每个候选区域，使用深度网络提取特征；</li>
+<li>特征送入每一类的SVM分类器，判别是否属于该类；</li>
+<li>使用回归器精细修正候选框位置。<h4 id="候选区域生成"><a href="#候选区域生成" class="headerlink" title="候选区域生成"></a>候选区域生成</h4>方法：Selective Search<h5 id="流程"><a href="#流程-1" class="headerlink" title="流程"></a>流程</h5></li>
+<li>将图像过分割成许多个小区域 </li>
+<li>不断合并可能性最高的两个小区域，直到整张图像合并成一个区域位置 </li>
+<li>输出所有曾经存在过的区域，即候选区域<h5 id="合并规则"><a href="#合并规则" class="headerlink" title="合并规则"></a>合并规则</h5></li>
+<li>颜色（颜色直方图）相近的</li>
+<li>纹理（梯度直方图）相近的</li>
+<li>合并后总面积小的</li>
+<li>合并后，总面积在其BBOX中所占比例大的<br>由于合并后的区域特征可以直接由子区域特征计算而来，计算速度较快。</li>
+</ol>
+<h2 id="reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>Girshick, Ross. “Fast r-cnn.” Proceedings of the IEEE International Conference on Computer Vision. 2015.</li>
+<li>Ren, Shaoqing, et al. “Faster R-CNN: Towards real-time object detection with region proposal networks.” Advances in Neural Information Processing Systems. 2015.</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/2017/04/24/Object-Detection/" data-id="cj4s290hx0005ukvmgttqd8mx" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://yoursite.com/2017/04/24/Object-Detection/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CV/">CV</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Deep-Learning/">Deep Learning</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">下一页 &raquo;</a>
+  </nav>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/排序/">排序</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/环境搭建/">环境搭建</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/程序语言/">程序语言</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/自然语言处理/">自然语言处理</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/计算机视觉/">计算机视觉</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Assembly/">Assembly</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CV/">CV</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Deep-Learning/">Deep Learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GitHub/">GitHub</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NLP/">NLP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Paraphrase-Identification/">Paraphrase Identification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Rank/">Rank</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86/">x86</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Assembly/" style="font-size: 10px;">Assembly</a> <a href="/tags/CV/" style="font-size: 20px;">CV</a> <a href="/tags/Deep-Learning/" style="font-size: 20px;">Deep Learning</a> <a href="/tags/GitHub/" style="font-size: 10px;">GitHub</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/NLP/" style="font-size: 20px;">NLP</a> <a href="/tags/Paraphrase-Identification/" style="font-size: 10px;">Paraphrase Identification</a> <a href="/tags/Rank/" style="font-size: 10px;">Rank</a> <a href="/tags/x86/" style="font-size: 10px;">x86</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/07/05/Learning-to-rank/">Learning to rank</a>
+          </li>
+        
+          <li>
+            <a href="/2017/07/05/x86-assembly-and-BLAS-optimization/">x86汇编与BLAS优化</a>
+          </li>
+        
+          <li>
+            <a href="/2017/05/01/TF-IDF/">TF-IDF</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/24/Face-Detection-Recognition/">Face Detection &amp; Recognition</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/24/Object-Detection/">Object Detection</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://arvinxiang.com" target="_blank">主题作者</a>
+          </li>
+        
+          <li>
+            <a href="http://hexo.io/" target="_blank">Hexo</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 ivorytwoer<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<script>
+  var disqus_shortname = 'ivorytwoer';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

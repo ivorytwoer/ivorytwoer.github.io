@@ -1,0 +1,410 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Object Detection | ivorytwoer的Hexo博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Development
+R-CNN
+SPP-Net
+Fast R-CNN
+Faster R-CNN
+YOLO
+FCN
+SSD
+R-FCN
+Mask R-CNN
+
+R-CNN基本情况R-CNN即Region-CNN，深度学习目标检测的开山之作。关键变化有2个：
+
+由传统的滑动窗口法改为预先提取一部分可能为目标的候选区域。
+由人工提取特征（如Haar、HOG）改为训练CNN进行提取。Dataset
+I">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Object Detection">
+<meta property="og:url" content="http://yoursite.com/2017/04/24/Object-Detection/index.html">
+<meta property="og:site_name" content="ivorytwoer的Hexo博客">
+<meta property="og:description" content="Development
+R-CNN
+SPP-Net
+Fast R-CNN
+Faster R-CNN
+YOLO
+FCN
+SSD
+R-FCN
+Mask R-CNN
+
+R-CNN基本情况R-CNN即Region-CNN，深度学习目标检测的开山之作。关键变化有2个：
+
+由传统的滑动窗口法改为预先提取一部分可能为目标的候选区域。
+由人工提取特征（如Haar、HOG）改为训练CNN进行提取。Dataset
+I">
+<meta property="og:updated_time" content="2017-04-24T16:32:42.617Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Object Detection">
+<meta name="twitter:description" content="Development
+R-CNN
+SPP-Net
+Fast R-CNN
+Faster R-CNN
+YOLO
+FCN
+SSD
+R-FCN
+Mask R-CNN
+
+R-CNN基本情况R-CNN即Region-CNN，深度学习目标检测的开山之作。关键变化有2个：
+
+由传统的滑动窗口法改为预先提取一部分可能为目标的候选区域。
+由人工提取特征（如Haar、HOG）改为训练CNN进行提取。Dataset
+I">
+  
+    <link rel="alternative" href="/atom.xml" title="ivorytwoer的Hexo博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">ivorytwoer的Hexo博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一只在CS道路上狂奔的羊驼</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yoursite.com">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-Object-Detection" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/04/24/Object-Detection/" class="article-date">
+  <time datetime="2017-04-24T15:04:55.000Z" itemprop="datePublished">2017-04-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/计算机视觉/">计算机视觉</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Object Detection
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="development"><a href="#Development" class="headerlink" title="Development"></a>Development</h2><ul>
+<li>R-CNN</li>
+<li>SPP-Net</li>
+<li>Fast R-CNN</li>
+<li>Faster R-CNN</li>
+<li>YOLO</li>
+<li>FCN</li>
+<li>SSD</li>
+<li>R-FCN</li>
+<li>Mask R-CNN</li>
+</ul>
+<h3 id="r-cnn"><a href="#R-CNN" class="headerlink" title="R-CNN"></a>R-CNN</h3><h5 id="基本情况"><a href="#基本情况" class="headerlink" title="基本情况"></a>基本情况</h5><p>R-CNN即Region-CNN，深度学习目标检测的开山之作。<br>关键变化有2个：</p>
+<ol>
+<li>由传统的滑动窗口法改为预先提取一部分可能为目标的候选区域。</li>
+<li>由人工提取特征（如Haar、HOG）改为训练CNN进行提取。<h5 id="dataset"><a href="#Dataset" class="headerlink" title="Dataset"></a>Dataset</h5></li>
+<li>ImageNet ILSVC 2012：预训练，1000万张图片，共1000类。 </li>
+<li>PASCAL VOC 2007：检测，1万张图片，共20类。<h5 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h5></li>
+<li>一张输入图像生成1K~2K个候选区域；</li>
+<li>对每个候选区域，使用深度网络提取特征；</li>
+<li>特征送入每一类的SVM分类器，判别是否属于该类；</li>
+<li>使用回归器精细修正候选框位置。<h4 id="候选区域生成"><a href="#候选区域生成" class="headerlink" title="候选区域生成"></a>候选区域生成</h4>方法：Selective Search<h5 id="流程"><a href="#流程-1" class="headerlink" title="流程"></a>流程</h5></li>
+<li>将图像过分割成许多个小区域 </li>
+<li>不断合并可能性最高的两个小区域，直到整张图像合并成一个区域位置 </li>
+<li>输出所有曾经存在过的区域，即候选区域<h5 id="合并规则"><a href="#合并规则" class="headerlink" title="合并规则"></a>合并规则</h5></li>
+<li>颜色（颜色直方图）相近的</li>
+<li>纹理（梯度直方图）相近的</li>
+<li>合并后总面积小的</li>
+<li>合并后，总面积在其BBOX中所占比例大的<br>由于合并后的区域特征可以直接由子区域特征计算而来，计算速度较快。</li>
+</ol>
+<h2 id="reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>Girshick, Ross. “Fast r-cnn.” Proceedings of the IEEE International Conference on Computer Vision. 2015.</li>
+<li>Ren, Shaoqing, et al. “Faster R-CNN: Towards real-time object detection with region proposal networks.” Advances in Neural Information Processing Systems. 2015.</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/2017/04/24/Object-Detection/" data-id="cj4s290hx0005ukvmgttqd8mx" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://yoursite.com/2017/04/24/Object-Detection/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CV/">CV</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Deep-Learning/">Deep Learning</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/04/24/Face-Detection-Recognition/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Face Detection &amp; Recognition
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/04/24/Paraphrase-identification/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Paraphrase Identification &amp; Auto QA System</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/排序/">排序</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/环境搭建/">环境搭建</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/程序语言/">程序语言</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/自然语言处理/">自然语言处理</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/计算机视觉/">计算机视觉</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Assembly/">Assembly</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CV/">CV</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Deep-Learning/">Deep Learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GitHub/">GitHub</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NLP/">NLP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Paraphrase-Identification/">Paraphrase Identification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Rank/">Rank</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86/">x86</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Assembly/" style="font-size: 10px;">Assembly</a> <a href="/tags/CV/" style="font-size: 20px;">CV</a> <a href="/tags/Deep-Learning/" style="font-size: 20px;">Deep Learning</a> <a href="/tags/GitHub/" style="font-size: 10px;">GitHub</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/NLP/" style="font-size: 20px;">NLP</a> <a href="/tags/Paraphrase-Identification/" style="font-size: 10px;">Paraphrase Identification</a> <a href="/tags/Rank/" style="font-size: 10px;">Rank</a> <a href="/tags/x86/" style="font-size: 10px;">x86</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/07/05/Learning-to-rank/">Learning to rank</a>
+          </li>
+        
+          <li>
+            <a href="/2017/07/05/x86-assembly-and-BLAS-optimization/">x86汇编与BLAS优化</a>
+          </li>
+        
+          <li>
+            <a href="/2017/05/01/TF-IDF/">TF-IDF</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/24/Face-Detection-Recognition/">Face Detection &amp; Recognition</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/24/Object-Detection/">Object Detection</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://arvinxiang.com" target="_blank">主题作者</a>
+          </li>
+        
+          <li>
+            <a href="http://hexo.io/" target="_blank">Hexo</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 ivorytwoer<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<script>
+  var disqus_shortname = 'ivorytwoer';
+  
+  var disqus_url = 'http://yoursite.com/2017/04/24/Object-Detection/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>
