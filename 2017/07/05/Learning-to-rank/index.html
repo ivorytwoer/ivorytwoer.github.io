@@ -6,85 +6,19 @@
   
   <title>Learning to rank | ivorytwoer的Hexo博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="简介
-Pointwise
-Pairwise
-RankSVM
-RankNet
-Rankboost
-
-
-Listwise
-LambdaRank
-AdaRank
-LambdaMART
-
-
-指标
-mAP
-NDCG
-mRR
-
-
-Reference
-
-
-简介排序学习是推荐、搜索、广告的核心方法。排序结果的好坏很大程度影响用户体验、广告收入等。排序学习是一个有监督的机器学习过程，对每一个给定的查询－文档对，">
+  <meta name="description" content="简介排序学习是推荐、搜索、广告的核心方法。排序结果的好坏很大程度影响用户体验、广告收入等。排序学习是一个有监督的机器学习过程，对每一个给定的查询－文档对，抽取特征，通过日志挖掘或者人工标注的方法获得真实数据标注。然后通过排序模型，使得输入能够和实际的数据相似。常用的排序学习分为三种类型：PointWise，PairWise和ListWise。
+Pointwise单文档方法的处理对象是单独的一篇文档">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Learning to rank">
 <meta property="og:url" content="http://yoursite.com/2017/07/05/Learning-to-rank/index.html">
 <meta property="og:site_name" content="ivorytwoer的Hexo博客">
-<meta property="og:description" content="简介
-Pointwise
-Pairwise
-RankSVM
-RankNet
-Rankboost
-
-
-Listwise
-LambdaRank
-AdaRank
-LambdaMART
-
-
-指标
-mAP
-NDCG
-mRR
-
-
-Reference
-
-
-简介排序学习是推荐、搜索、广告的核心方法。排序结果的好坏很大程度影响用户体验、广告收入等。排序学习是一个有监督的机器学习过程，对每一个给定的查询－文档对，">
-<meta property="og:updated_time" content="2017-07-06T06:36:48.230Z">
+<meta property="og:description" content="简介排序学习是推荐、搜索、广告的核心方法。排序结果的好坏很大程度影响用户体验、广告收入等。排序学习是一个有监督的机器学习过程，对每一个给定的查询－文档对，抽取特征，通过日志挖掘或者人工标注的方法获得真实数据标注。然后通过排序模型，使得输入能够和实际的数据相似。常用的排序学习分为三种类型：PointWise，PairWise和ListWise。
+Pointwise单文档方法的处理对象是单独的一篇文档">
+<meta property="og:updated_time" content="2017-07-06T06:42:19.117Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Learning to rank">
-<meta name="twitter:description" content="简介
-Pointwise
-Pairwise
-RankSVM
-RankNet
-Rankboost
-
-
-Listwise
-LambdaRank
-AdaRank
-LambdaMART
-
-
-指标
-mAP
-NDCG
-mRR
-
-
-Reference
-
-
-简介排序学习是推荐、搜索、广告的核心方法。排序结果的好坏很大程度影响用户体验、广告收入等。排序学习是一个有监督的机器学习过程，对每一个给定的查询－文档对，">
+<meta name="twitter:description" content="简介排序学习是推荐、搜索、广告的核心方法。排序结果的好坏很大程度影响用户体验、广告收入等。排序学习是一个有监督的机器学习过程，对每一个给定的查询－文档对，抽取特征，通过日志挖掘或者人工标注的方法获得真实数据标注。然后通过排序模型，使得输入能够和实际的数据相似。常用的排序学习分为三种类型：PointWise，PairWise和ListWise。
+Pointwise单文档方法的处理对象是单独的一篇文档">
   
     <link rel="alternative" href="/atom.xml" title="ivorytwoer的Hexo博客" type="application/atom+xml">
   
@@ -166,32 +100,7 @@ Reference
     
     <div class="article-entry" itemprop="articleBody">
       
-        <!-- toc -->
-<ul>
-<li><a href="#简介">简介</a></li>
-<li><a href="#pointwise">Pointwise</a></li>
-<li><a href="#pairwise">Pairwise</a><ul>
-<li><a href="#ranksvm">RankSVM</a></li>
-<li><a href="#ranknet">RankNet</a></li>
-<li><a href="#rankboost">Rankboost</a></li>
-</ul>
-</li>
-<li><a href="#listwise">Listwise</a><ul>
-<li><a href="#lambdarank">LambdaRank</a></li>
-<li><a href="#adarank">AdaRank</a></li>
-<li><a href="#lambdamart">LambdaMART</a></li>
-</ul>
-</li>
-<li><a href="#指标">指标</a><ul>
-<li><a href="#map">mAP</a></li>
-<li><a href="#ndcg">NDCG</a></li>
-<li><a href="#mrr">mRR</a></li>
-</ul>
-</li>
-<li><a href="#reference">Reference</a></li>
-</ul>
-<!-- tocstop -->
-<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>排序学习是推荐、搜索、广告的核心方法。排序结果的好坏很大程度影响用户体验、广告收入等。<br>排序学习是一个有监督的机器学习过程，对每一个给定的查询－文档对，抽取特征，通过日志挖掘或者人工标注的方法获得真实数据标注。然后通过排序模型，使得输入能够和实际的数据相似。<br>常用的排序学习分为三种类型：PointWise，PairWise和ListWise。</p>
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>排序学习是推荐、搜索、广告的核心方法。排序结果的好坏很大程度影响用户体验、广告收入等。<br>排序学习是一个有监督的机器学习过程，对每一个给定的查询－文档对，抽取特征，通过日志挖掘或者人工标注的方法获得真实数据标注。然后通过排序模型，使得输入能够和实际的数据相似。<br>常用的排序学习分为三种类型：PointWise，PairWise和ListWise。</p>
 <h2 id="pointwise"><a href="#Pointwise" class="headerlink" title="Pointwise"></a>Pointwise</h2><p>单文档方法的处理对象是单独的一篇文档，将文档转换为特征向量后，机器学习系统根据从训练数据中学习到的分类或者回归函数对文档打分，打分结果即是搜索结果。</p>
 <h2 id="pairwise"><a href="#Pairwise" class="headerlink" title="Pairwise"></a>Pairwise</h2><p>对于搜索系统来说，系统接收到用户査询后，返回相关文档列表，所以问题的关键是确定文档之间的先后顺序关系。单文档方法完全从单个文档的分类得分角度计算，没有考虑文档之间的顺序关系。文档对方法将排序问题转化为多个pair的排序问题，比较不同文章的先后顺序。</p>
 <p>但是文档对方法也存在如下问题：</p>
@@ -212,7 +121,7 @@ Reference
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yoursite.com/2017/07/05/Learning-to-rank/" data-id="cj4s2dn98000424vm9ent3mfi" class="article-share-link">分享到</a>
+        <a data-url="http://yoursite.com/2017/07/05/Learning-to-rank/" data-id="cj4s2eqw300044kvmsi3189y9" class="article-share-link">分享到</a>
       
 
       
