@@ -97,6 +97,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
+      
         <h2 id="tf-idf算法文章关键词提取"><a href="#TF-IDF算法——文章关键词提取" class="headerlink" title="TF-IDF算法——文章关键词提取"></a>TF-IDF算法——文章关键词提取</h2><p>TF-IDF是一种加权方法，用以评估一个字词对于一个文件集或一个语料库中的其中一份文件的重要程度。字词的重要性随着它在文件中出现的次数成正比增加，但同时会随着它在语料库中出现的频率成反比下降。<br>停用词（stop words）：”的”、”是”、”在”等，对找到结果毫无帮助、必须过滤掉的词，通常词频非常高。<br>逆文档频率（Inverse Document Frequency）：在词频的基础上，要对每个词分配一个”重要性”权重。最常见的词（”的”、”是”、”在”）给予最小的权重，较常见的词（”中国”）给予较小的权重，较少见的词（”蜜蜂”、”养殖”）给予较大的权重。大小与一个词的常见程度成反比。</p>
 <ol>
 <li>计算词频（Term Frequency）<script type="math/tex; mode=display">TF=某个词在文章中出现的次数</script>为了消除文章长短的影响，标准化：<script type="math/tex; mode=display">TF=\frac{某个词在文章中出现的次数}{文章的总词数}</script>或<script type="math/tex; mode=display">TF=\frac{某个词在文章中出现的次数}{该文出现次数最多的词的出现次数}</script></li>
@@ -118,7 +119,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yoursite.com/2017/05/01/TF-IDF/" data-id="cj4s2eqwb00094kvm8ej4216d" class="article-share-link">分享到</a>
+        <a data-url="http://yoursite.com/2017/05/01/TF-IDF/" data-id="cj4s2vcr1000bdwvmetqmwukj" class="article-share-link">分享到</a>
       
 
       
